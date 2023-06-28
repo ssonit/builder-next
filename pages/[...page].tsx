@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 
   const paths = pages
     .map((page) => `${page.data?.url}`)
-    .filter((url) => url !== "/");
+    .filter((url) => url !== "/" && url !== "/about");
 
   return {
     paths,
