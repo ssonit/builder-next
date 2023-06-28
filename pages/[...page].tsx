@@ -29,13 +29,17 @@ export async function getStaticProps({
 
 export async function getStaticPaths() {
   const pages = await builder.getAll("page", {
+    fields: "data.url",
     options: { noTargeting: true },
-    omit: "data.blocks",
   });
 
+  const paths = pages
+    .map((page) => `${page.data?.url}`)
+    .filter((url) => url !== "/");
+
   return {
-    paths: pages.map((page) => `${page.data?.url}`),
-    fallback: true,
+    paths,
+    fallback: "blocking",
   };
 }
 
@@ -49,10 +53,10 @@ export default function Page({
   if (router.isFallback) {
     return <h1>Loading...</h1>;
   }
-  console.log(page, "page");
   return (
     <main>
       <Head>
+        <title>{page?.data?.title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {!page && <meta name="robots" content="noindex" />}
       </Head>

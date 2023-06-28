@@ -1,3 +1,5 @@
 export const builderConfig = {
-  PUBLIC_API_KEY: "875bbc300d47406983af8c02ac24f93e",
+  PUBLIC_API_KEY:
+    "147c1c8345ba43ec8521457f8c1c057b" ||
+    (process.env.BUILDER_PUBLIC_API_KEY as string),
 };
