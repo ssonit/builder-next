@@ -11,3 +11,32 @@ Builder.registerComponent(
     ],
   }
 );
+
+Builder.registerComponent(
+  dynamic(() => import("@/components/Header")),
+  {
+    name: "Header",
+    inputs: [
+      {
+        name: "links",
+        type: "array",
+        defaultValue: [
+          {
+            title: "Home",
+            url: "/",
+          },
+        ],
+        subFields: [
+          {
+            name: "title",
+            type: "string",
+          },
+          {
+            name: "url",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  }
+);

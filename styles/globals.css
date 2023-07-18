@@ -6,6 +6,8 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --scrollbar-color: #ccc;
+  --scrollbar-bg-color: #111030e7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,5 +18,65 @@
   }
 }
 
-body {
+@layer base {
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+  }
+  img,
+  picture,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+  input,
+  select,
+  textarea {
+    background-color: transparent;
+    outline: none;
+  }
+  button {
+    cursor: pointer;
+    background-color: transparent;
+    outline: none;
+    border: 0;
+  }
+  body {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    min-height: 100vh;
+    overflow-y: scroll;
+  }
+}
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: var(--scrollbar-color) var(--scrollbar-bg-color);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg-color);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+    background: linear-gradient(to bottom, #6157ff, #ee49fd);
+    border-radius: 10px;
+    padding: 0 10px;
+    border: 4px solid var(--scrollbar-bg-color);
+    height: 120px;
+  }
 }

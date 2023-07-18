@@ -1,15 +1,18 @@
-import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import type {
+  GetServerSidePropsContext,
+  GetStaticPropsContext,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from "next";
 import { useRouter } from "next/router";
 import { BuilderComponent, builder, useIsPreviewing } from "@builder.io/react";
 import DefaultErrorPage from "next/error";
 import Head from "next/head";
-import { builderConfig } from "@/configs/builder";
+import { NextSeo } from "next-seo";
 
-builder.init(builderConfig.PUBLIC_API_KEY);
-
-export async function getStaticProps({
+export async function getServerSideProps({
   params,
-}: GetStaticPropsContext<{ page: string[] }>) {
+}: GetServerSidePropsContext<{ page: string[] }>) {
   const page =
     (await builder
       .get("page", {
@@ -23,29 +26,48 @@ export async function getStaticProps({
     props: {
       page,
     },
-    revalidate: 5,
   };
 }
 
-export async function getStaticPaths() {
-  const pages = await builder.getAll("page", {
-    fields: "data.url",
-    options: { noTargeting: true },
-  });
+// export async function getStaticProps({
+//   params,
+// }: GetStaticPropsContext<{ page: string[] }>) {
+//   const page =
+//     (await builder
+//       .get("page", {
+//         userAttributes: {
+//           urlPath: "/" + (params?.page?.join("/") || ""),
+//         },
+//       })
+//       .toPromise()) || null;
 
-  const paths = pages
-    .map((page) => `${page.data?.url}`)
-    .filter((url) => url !== "/" && url !== "/about");
+//   return {
+//     props: {
+//       page,
+//     },
+//     revalidate: 5,
+//   };
+// }
 
-  return {
-    paths,
-    fallback: "blocking",
-  };
-}
+// export async function getStaticPaths() {
+//   const pages = await builder.getAll("page", {
+//     fields: "data.url",
+//     options: { noTargeting: true },
+//   });
+
+//   const paths = pages
+//     .map((page) => `${page.data?.url}`)
+//     .filter((url) => url !== "/" && url !== "/about");
+
+//   return {
+//     paths,
+//     fallback: "blocking",
+//   };
+// }
 
 export default function Page({
   page,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const isPreviewingInBuilder = useIsPreviewing();
   const show404 = !page && !isPreviewingInBuilder;
@@ -53,18 +75,43 @@ export default function Page({
   if (router.isFallback) {
     return <h1>Loading...</h1>;
   }
+
+  if (show404) {
+    return (
+      <>
+        <Head>
+          <meta name="robots" content="noindex" />
+        </Head>
+        <DefaultErrorPage statusCode={404} />
+      </>
+    );
+  }
+
+  const { title, description, image } = page?.data! || {};
+
   return (
     <main>
       <Head>
-        <title>{page?.data?.title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {!page && <meta name="robots" content="noindex" />}
       </Head>
-      {show404 ? (
-        <DefaultErrorPage statusCode={404} />
-      ) : (
-        <BuilderComponent model="page" content={page} />
-      )}
+      <NextSeo
+        title={title}
+        description={description}
+        openGraph={{
+          type: "website",
+          title,
+          description,
+          images: [
+            {
+              url: image,
+              width: 800,
+              height: 600,
+              alt: title,
+            },
+          ],
+        }}
+      />
+      <BuilderComponent model="page" content={page} />
     </main>
   );
 }

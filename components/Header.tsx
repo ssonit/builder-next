@@ -3,10 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-interface HeaderProps {}
+interface HeaderProps {
+  links: INavlink[];
+}
 
-const Header: NextPage<HeaderProps> = () => {
-  const headerRef = useRef<HTMLDivElement | null>(null);
+const Header: NextPage<HeaderProps> = ({ links }) => {
+  const headerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -21,6 +23,7 @@ const Header: NextPage<HeaderProps> = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
   return (
     <div className="fixed top-0 left-0 w-full py-4 z-[100]" ref={headerRef}>
       <div className="flex items-center justify-between px-24">
@@ -30,12 +33,19 @@ const Header: NextPage<HeaderProps> = () => {
             height={56}
             src={"/images/logo_quantum.png"}
             alt="logo"
+            priority
           />
         </Link>
         <div className="flex items-center gap-10 mr-8 text-white">
-          <Link className="font-bold" href={"/about"}>
-            About
-          </Link>
+          {links?.map((item) => (
+            <Link
+              key={item.title}
+              className="font-bold capitalize"
+              href={item.url}
+            >
+              {item.title}
+            </Link>
+          ))}
           <Link className="font-bold" href={"/learn"}>
             Learn
           </Link>
