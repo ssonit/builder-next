@@ -13,6 +13,24 @@ Builder.registerComponent(
 );
 
 Builder.registerComponent(
+  dynamic(() => import("@/components/NextLink")),
+  {
+    name: "NextLink",
+    inputs: [
+      {
+        name: "href",
+        type: "string",
+        defaultValue: "/",
+      },
+      {
+        name: "children",
+        type: "uiBlocks",
+      },
+    ],
+  }
+);
+
+Builder.registerComponent(
   dynamic(() => import("@/components/Header")),
   {
     name: "Header",

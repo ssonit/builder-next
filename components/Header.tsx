@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
 interface HeaderProps {
@@ -46,6 +47,9 @@ const Header: NextPage<HeaderProps> = ({ links }) => {
               {item.title}
             </Link>
           ))}
+          <Link className="font-bold" href={"/posts"}>
+            Posts
+          </Link>
           <Link className="font-bold" href={"/learn"}>
             Learn
           </Link>
